@@ -1,4 +1,4 @@
-# Cookbook Name:: apache-vcl
+# Cookbook Name:: vcl
 # Recipe:: default
 #
 # Copyright (C) 2012 Alex Valiushko

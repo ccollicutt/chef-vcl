@@ -6,43 +6,28 @@ This cookbook install and configures Apache VCL system on CentOS 6.3
 * Chef: 0.10.10+
 
 ## Cookbooks:
-Look in `Berksfile`
+Look in `metadata.rb`.
 
-# Platforms
-This cookbooks supports and was tested in Centos 6.3 only.
+## Platforms
+This cookbook supports and was tested on Centos 6.3 only.
 
 # Usage
 To test it in virtual environment:
 
     $ gem install bundler
-    $ git clone
-    $ cd apache-vcl
+    $ git clone https://github.com/illotum/chef-vcl.git
+    $ cd chef-vcl
     $ bundle install
-    $ vagrant up
+    $ bundle exec vagrant up
+
+And point your browser to https://192.168.33.10
 
 # Attributes
-Cookbook supports number of attributes, all of which are explained in
-VCL installation guide:
-
-    https://cwiki.apache.org/VCL/vcl-23-installation.html
-
-## VCL mail
-`node['vcl']['helpmail']`
-`node['vcl']['errormail']`
-`node['vcl']['envelopesender']`
-
-## Database connection
-`node['vcl']['dbname']`
-`node['vcl']['dbuser']`
-`node['vcl']['dbpass']`
-
-## Crypto keys
-`node['vcl']['cryptkey']`
-`node['vcl']['pemkey']`
+Cookbook supports number of attributes, check `attributes/default.rb`.
 
 # Recipes
-Only `default` installation exists for now. All VCL roles and MySQL are
-installed on one node.
+Only `default` installation exists for now. All VCL roles and MySQL
+database are installed on one node.
 
 # Author
 Author:: Alex Valiushko (<alex.valiushko@cybera.ca>)
