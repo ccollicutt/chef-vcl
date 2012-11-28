@@ -17,7 +17,6 @@
 #
 
 # {{{ INIT
-::Chef::Recipe.send(:include, Opscode::OpenSSL::Password)
 include_recipe "selinux::permissive"
 include_recipe "yum::epel"
 include_recipe "yum::repoforge"
@@ -27,20 +26,8 @@ yum_repository "serverascode" do
   url "http://packages.serverascode.com/mrepo/custom-centos6-noarch/RPMS.updates"
   action :add
 end
-
-# Populate passwords. Allow simple passwords for non-production.
-if node['instance_role'] == 'vagrant'
-  node.set_unless['vcl']['dbpass'] = 'vclpass'
-  node.set_unless['vcl']['cryptkey'] = 'vclpass'
-  node.set_unless['vcl']['pemkey'] = 'vclpass'
-else
-  node.set_unless['vcl']['dbpass'] = secure_password
-  node.set_unless['vcl']['cryptkey'] = secure_password
-  node.set_unless['vcl']['pemkey'] = secure_password
-end
 # }}}
 # {{{ SETUP
-
 package "dhclient" do
   action :remove
 end
@@ -157,7 +144,7 @@ cookbook_file "/usr/share/vcl-managementnode/lib/VCL/Module/Provisioning/opensta
   mode 0644
 end
 
-"python-setuptools python-novaclient".split.each do |p|
+%w{ python-setuptools python-novaclient }.each do |p|
   package p do
     action :install
   end

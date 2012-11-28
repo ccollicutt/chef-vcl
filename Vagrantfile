@@ -55,6 +55,7 @@ Vagrant::Config.run do |config|
         :server_debian_password => 'debpass',
         :server_repl_password => 'replpass'
       },
+      :bind_address => '127.0.0.1'
     }
 
     chef.run_list = [
