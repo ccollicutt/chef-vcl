@@ -1,0 +1,4 @@
+os_auth_url => "<%= node['nova']['keystone_auth_uri'] %>",
+os_tenant_name => "<%= node['nova']['user'] %>",
+os_username => "<%= node['nova']['project'] %>",
+os_password => "<%= node['nova']['access_key'] %>"

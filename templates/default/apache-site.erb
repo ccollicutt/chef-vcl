@@ -1,0 +1,11 @@
+<VirtualHost *:80>
+  DocumentRoot /usr/share/vcl-web
+  ServerName <%= node['fqdn'] %>
+</VirtualHost>
+<VirtualHost *:443>
+  SSLEngine on
+  SSLCertificateFile /etc/pki/tls/certs/localhost.crt
+  SSLCertificateKeyFile /etc/pki/tls/private/localhost.key
+  DocumentRoot /usr/share/vcl-web
+  ServerName <%= node['fqdn'] %>
+</VirtualHost>
