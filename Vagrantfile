@@ -59,6 +59,7 @@ Vagrant::Config.run do |config|
     }
 
     chef.run_list = [
+      "recipe[mysql::server]",
       "recipe[vcl::default]",
     ]
   end

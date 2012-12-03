@@ -12,15 +12,28 @@ Look in `metadata.rb`.
 This cookbook supports and was tested on Centos 6.3 only.
 
 # Usage
-To test it in virtual environment:
+## Init
+To get cookbook and management tools:
 
     $ gem install bundler
     $ git clone https://github.com/illotum/chef-vcl.git
     $ cd chef-vcl
     $ bundle install
+
+## Test
+To test it in virtual environment:
+
     $ bundle exec vagrant up
 
 And point your browser to https://192.168.33.10
+
+## Dependencies
+This cookbook uses [Berkshelf](http://berkshelf.com/) to manage dependencies. To fetch them
+into `/some/dir` you will use:
+
+    $ bundle exec berks install --path /some/dir
+
+It's being done for you in test deployment automatically.
 
 # Attributes
 Cookbook supports number of attributes, check `attributes/default.rb`.
