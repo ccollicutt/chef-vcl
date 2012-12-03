@@ -53,13 +53,13 @@ Vagrant::Config.run do |config|
       :mysql => {
         :server_root_password => 'rootpass',
         :server_debian_password => 'debpass',
-        :server_repl_password => 'replpass'
+        :server_repl_password => 'replpass',
+        :bind_address => '127.0.0.1'
       },
-      :bind_address => '127.0.0.1'
     }
 
     chef.run_list = [
-      "recipe[apache-vcl::default]",
+      "recipe[vcl::default]",
     ]
   end
 end

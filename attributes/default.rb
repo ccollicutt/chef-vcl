@@ -24,7 +24,7 @@ else
   set_unless['vcl']['dbpass'] = secure_password
   set_unless['vcl']['cryptkey'] = secure_password
   set_unless['vcl']['pemkey'] = secure_password
-  set_unless['vcl']['access_key'] = secure_password
+  set_unless['vcl']['stackkey'] = secure_password
 end
 
 # Configure mysql to listen ourselves

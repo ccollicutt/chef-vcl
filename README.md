@@ -8,7 +8,7 @@ This cookbook install and configures Apache VCL system on CentOS 6.3
 ## Cookbooks:
 Look in `metadata.rb`.
 
-## Platforms
+## Platforms:
 This cookbook supports and was tested on Centos 6.3 only.
 
 # Usage
