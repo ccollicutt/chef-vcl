@@ -1,6 +1,7 @@
 ::Chef::Node.send(:include, Opscode::OpenSSL::Password)
 
 # Emails. Check https://cwiki.apache.org/VCL/vcl-23-installation.html
+default['vcl']['fqdn'] = "vcl.vm"
 default['vcl']['helpmail'] = "help"
 default['vcl']['errormail'] = "errors"
 default['vcl']['envelopesender'] = "envelope"
