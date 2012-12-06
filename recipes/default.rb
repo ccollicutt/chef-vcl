@@ -121,6 +121,14 @@ template "/etc/httpd/sites-available/default" do
   mode 0644
 end
 
+%w{ server.key server.crt }.each do |f|
+  cookbook_file "/etc/httpd/ssl/#{f}" do
+    source f
+    mode 0644
+    action :create_if_missing
+  end
+end
+
 template "/usr/share/vcl-web/.ht-inc/conf.php" do
   source "conf.erb"
   mode 0644
