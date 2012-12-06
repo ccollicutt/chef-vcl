@@ -4,8 +4,8 @@
 </VirtualHost>
 <VirtualHost *:443>
   SSLEngine on
-  SSLCertificateFile /etc/pki/tls/certs/localhost.crt
-  SSLCertificateKeyFile /etc/pki/tls/private/localhost.key
+  SSLCertificateFile /etc/httpd/ssl/server.crt
+  SSLCertificateKeyFile /etc/httpd/ssl/server.key
   DocumentRoot /usr/share/vcl-web
   ServerName <%= node['vcl']['fqdn'] %>
 </VirtualHost>

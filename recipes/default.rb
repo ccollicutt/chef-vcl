@@ -34,15 +34,11 @@ end
 
 service "iptables" do
   supports :status => true, :restart => true, :reload => true
-  action [ :enable, :start ]
+  action [ :enable, :restart ]
 end
 
 # }}}
 # {{{ SETUP
-package "dhclient" do
-  action :remove
-end
-
 %w{ vcl-cybera vcl-cybera-web vcl-cybera-managementnode }.each do |pack|
   package pack do
     action :install
