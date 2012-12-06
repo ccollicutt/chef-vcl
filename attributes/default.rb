@@ -6,6 +6,11 @@ default['vcl']['helpmail'] = "help"
 default['vcl']['errormail'] = "errors"
 default['vcl']['envelopesender'] = "envelope"
 
+# Packages to install.
+default['vcl']['packages']['vcl'] = "vcl-cybera"
+default['vcl']['packages']['vcl-web'] = "vcl-cybera-web"
+default['vcl']['packages']['vcl-mgmt'] = "vcl-cybera-managementnode"
+
 # Database connection
 default['vcl']['dbname'] = "vcldb"
 default['vcl']['dbuser'] = "vcluser"

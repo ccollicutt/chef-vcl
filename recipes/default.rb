@@ -39,8 +39,8 @@ end
 
 # }}}
 # {{{ SETUP
-%w{ vcl-cybera vcl-cybera-web vcl-cybera-managementnode }.each do |pack|
-  package pack do
+node['vcl']['packages'].values.each do |p|
+  package p do
     action :install
   end
 end
