@@ -10,6 +10,6 @@ version          "0.1.1"
   supports os
 end
 
-%w{ database mysql selinux yum apache2 build-essential openssl }.each do |dep|
+%w{ database mysql ntp selinux yum apache2 build-essential openssl }.each do |dep|
   depends dep
 end

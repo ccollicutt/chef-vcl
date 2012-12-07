@@ -21,6 +21,14 @@ include_recipe "selinux::permissive"
 include_recipe "yum::epel"
 include_recipe "yum::repoforge"
 
+link "/etc/localtime" do
+  filename = "/usr/share/zoneinfo/#{node['vcl']['timezone']}"
+  to filename
+  only_if { File.exists? filename }
+end
+
+include_recipe "ntp::default"
+
 yum_repository "serverascode" do
   description "Serverascode Extra Packages for Enterprise Linux 6"
   url "http://packages.serverascode.com/mrepo/custom-centos6-noarch/RPMS.updates"
@@ -142,16 +150,19 @@ end
 # {{{ OPENSTACK MOD
 mysql_database node['vcl']['dbname'] do
   connection mysql_connection
+  # TODO: Abstract inserts via attributes
   sql <<-QUERY
   insert into module (id, name, prettyname, description, perlpackage) values (28, 'provisioning_nova', 'Openstack Nova Module', '', 'VCL::Module::Provisioning::openstack');
   insert into provisioning (id, name, prettyname, moduleid) values (11, 'openstack_nova', 'Openstack Nova', 28);
   insert into OSinstalltype (id, name) values (6, 'openstack_nova');
   insert into provisioningOSinstalltype (provisioningid, OSinstalltypeid) values (11, 6);
-  create table openstackImageNameMap(openstackimagename VARCHAR(60), vclimagename VARCHAR(60));
-  # According to: https://issues.apache.org/jira/browse/VCL-590?focusedCommentId=13416496#comment-13416496 moduleid should be 5 for linux
-  # insert into OS (id,name,prettyname,type,installtype,sourcepath,moduleid) values (45, "rhel6openstack", "CentOS 6 OpenStack", "linux", "openstack_nova", "centos6", 5);
+  insert into provisioning (name,prettyname,moduleid) values ("openstack_nova", "OpenStack Nova Module", 28);
+  create table openstackImageNameMap(openstackimagename VARCHAR(60), vclimagename VARCHAR(60), flavor tinyint);
+  #insert into OS (name, prettyname, type, installtype, sourcepath, moduleid) values ("win7openstack", "win7openstack", "windows", "openstack_nova", "image", 17);
+  #insert into managementnode (hostname, IPaddress, ownerid, stateid, checkininterval, installpath, imagelibenable, imagelibgroupid, imagelibuser, imagelibkey, `keys`, predictivemoduleid, sshport, publicIPconfiguration, publicSubnetMask, publicDefaultGateway, publicDNSserver, sysadminEmailAddress, sharedMailBox) VALUES ('localhost', '127.0.0.1', 1, 2, 5, '', 0, NULL, NULL, NULL, '/etc/vcl/vcl.key', 8, 22, 'nat', NULL, NULL, NULL, NULL, NULL);
+  #insert into resource (resourcetypeid, subid) VALUES (16, 1);
   QUERY
-  action :query
+  action :nothing
 end
 
 cookbook_file "/usr/share/vcl-managementnode/lib/VCL/Module/Provisioning/openstack.pm" do

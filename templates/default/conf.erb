@@ -33,7 +33,7 @@ define("ENVELOPESENDER", "<%= node['vcl']['envelopesender'] %>@<%= node['domain'
 define("COOKIEDOMAIN", ".<%= node['vcl']['fqdn'] %>");       // domain in which cookies are set
 define("HOMEURL", "http://<%= node['vcl']['fqdn'] %>"); // url to go to when someone clicks HOME or Logout
 
-date_default_timezone_set('America/New_York'); // set this to your timezone; a list of available values can
+date_default_timezone_set('<%= node['vcl']['timezone'] %>'); // set this to your timezone; a list of available values can
                                                // be found at http://php.net/manual/en/timezones.php
 
 define("DEFAULTLOCALE", "en_US");              // default locale for the site

@@ -1,5 +1,8 @@
 ::Chef::Node.send(:include, Opscode::OpenSSL::Password)
 
+
+default['vcl']['timezone'] = "America/Edmonton"
+
 # Emails. Check https://cwiki.apache.org/VCL/vcl-23-installation.html
 default['vcl']['fqdn'] = "vcl.vm"
 default['vcl']['helpmail'] = "help"
