@@ -7,7 +7,7 @@ default['vcl']['timezone'] = "America/Edmonton"
 default['vcl']['fqdn'] = "vcl.vm"
 default['vcl']['helpmail'] = "help"
 default['vcl']['errormail'] = "errors"
-default['vcl']['envelopesender'] = "envelope"
+default['vcl']['envelopesender'] = "vcl-support"
 
 # Packages to install.
 default['vcl']['packages']['vcl'] = "vcl-cybera"
@@ -35,6 +35,3 @@ else
   set_unless['vcl']['pemkey'] = secure_password
   set_unless['vcl']['stackkey'] = secure_password
 end
-
-# Configure mysql to listen ourselves
-set_unless['mysql']['bind_address'] = "127.0.0.1"
