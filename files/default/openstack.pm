@@ -41,6 +41,7 @@ use File::Copy;
 # Specify the lib path using FindBin
 use FindBin;
 use lib "$FindBin::Bin/../../..";
+use Regexp::Common qw/net/;
 
 # Configure inheritance
 use base qw(VCL::Module::Provisioning);
@@ -616,6 +617,87 @@ sub does_image_exist {
 
 #/////////////////////////////////////////////////////////////////////////////
 
+=head2  getimageflavor
+
+ Parameters  : imagename
+ Returns     : 0 failure or flavor type
+ Description : flavor type 
+
+=cut
+
+sub _get_image_flavor {
+	my $self = shift;
+	if (ref($self) !~ /open/i) {
+		notify($ERRORS{'CRITICAL'}, 0, "subroutine was called as a function, it must be called as a class method");
+		return 0;
+	}
+   	
+	my $os_image_name = shift;
+
+	#
+	# Grab the config again, not sure this is a good way to do this
+	#
+        notify($ERRORS{'OK'}, 0, "********* Set OpenStack User Configuration******************");
+        my $computer_shortname   = $self->data->get_computer_short_name;
+        notify($ERRORS{'OK'}, 0,  "computer_shortname: $computer_shortname");
+        # User's environment file
+        my $user_config_file = '/etc/vcl/openstack/openstack.conf';
+        notify($ERRORS{'OK'}, 0,  "loading $user_config_file");
+        my %config = do($user_config_file);
+        if (!%config) {
+                notify($ERRORS{'CRITICAL'},0, "failure to process $user_config_file");
+                return 0;
+        }
+        $self->{config} = \%config;
+	
+	#
+	# Get the default flavor from the config file
+	#
+        my $os_default_flavor = $self->{config}->{os_default_flavor};
+ 
+        notify($ERRORS{'OK'}, 0, "No image size information in Openstack");
+
+
+   	# XXX NOTE: The like part of this statement will cause issues if there is more than one version
+   	#           of an image, which I don't think there should be -- Curtis XXX
+	my $select_statement = "
+	SELECT
+	flavor
+	FROM
+	openstackImageNameMap
+	WHERE
+	openstackimagename like '$os_image_name%'
+	";
+
+	notify($ERRORS{'OK'}, 0, "flavor select_statement: $select_statement");
+    # Call the database select subroutine
+    # This will return an array of one or more rows based on the select statement
+    my @selected_rows = database_select($select_statement);
+	# Check to make sure 1 row was returned
+    if (scalar @selected_rows == 0) {
+            return 0;
+    }
+    elsif (scalar @selected_rows > 1) {
+            notify($ERRORS{'WARNING'}, 0, "" . scalar @selected_rows . " rows were returned from database select");
+            return 0;
+    }
+    my $flavor = $selected_rows[0]{flavor};
+
+	if (defined($flavor) && $flavor ne "") {
+		notify($ERRORS{'OK'}, 0, "Using flavor from database");
+		return $flavor;
+	} else {
+		notify($ERRORS{'OK'}, 0, "Flavor from database is NULL, using default flavor from openstack configuration file");
+    		return $os_default_flavor;
+	}		
+
+
+} ## end sub get_image_size
+
+
+
+#/////////////////////////////////////////////////////////////////////////////
+
 =head2  getimagesize
 
  Parameters  : imagename
@@ -672,6 +754,7 @@ sub _set_openstack_user_conf {
         my $os_tenant_name = $self->{config}->{os_tenant_name};
         my $os_username = $self->{config}->{os_username};
         my $os_password = $self->{config}->{os_password};
+        my $os_default_flavor = $self->{config}->{os_default_flavor};
 
 	# Set Environment File
 	$ENV{'OS_AUTH_URL'} = $os_auth_url;
@@ -771,7 +854,6 @@ sub _terminate_instances {
 sub _run_instances {
 	my $self = shift;
 	
-	my $flavor_type = '1';
 	my $key_name = 'vclkey';
 	my $image_full_name = $self->data->get_image_name;
 	my $computer_shortname  = $self->data->get_computer_short_name;
@@ -786,6 +868,11 @@ sub _run_instances {
                 notify($ERRORS{'DEBUG'}, 0, "Fail to acquire the Image ID: $image_name");
                 return 0;
         }
+
+	my $flavor_type = $self->_get_image_flavor($image_name);
+	notify($ERRORS{'DEBUG'}, 0, "flavor is: $flavor_type");
+
+
 	my $run_instance = "nova boot --flavor $flavor_type --image $image_name --key_name $key_name $computer_shortname";
 	notify($ERRORS{'OK'}, 0, "The run_instance: $run_instance\n");
 	
@@ -824,7 +911,7 @@ sub _update_private_ip {
 		$describe_instance_output = `$describe_instance`;
 		notify($ERRORS{'OK'}, 0, "Describe Instance: $describe_instance_output");
 
-		if($describe_instance_output =~ m/(192.168.\d{1,3}.\d{1,3})/g)
+		if($describe_instance_output =~ m/($RE{net}{IPv4})/g)
 		{
 			$private_ip = $&;
 			notify($ERRORS{'OK'}, 0, "The instance private IP on Computer $computer_shortname: $private_ip");

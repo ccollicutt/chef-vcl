@@ -166,7 +166,8 @@ mysql_database node['vcl']['dbname'] do
 end
 
 cookbook_file "/usr/share/vcl-managementnode/lib/VCL/Module/Provisioning/openstack.pm" do
-  source "openstack_nova_api.pm"
+  source "openstack.pm"
+#  source "https://raw.github.com/cybera/openstack-vcl-module/master/openstack.pm"
   mode 0644
 end
 
